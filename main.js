@@ -25,7 +25,13 @@ function check() {
         totalLiteralsCount += literals.length;
     });
 
-    alert(totalLiterals);
+    let uniqueLiterals = [];
 
-    alert(totalLiteralsCount / countOfGroups + " == " + expectedCountOfLiteralsPerGroup + " (expected)");
+    totalLiterals.forEach(value => {
+        if (uniqueLiterals.indexOf(value.replace('!', "")) === -1) {
+            uniqueLiterals.push(value);
+        }
+    });
+
+    alert(uniqueLiterals.length + " == " + expectedCountOfLiteralsPerGroup);
 }
