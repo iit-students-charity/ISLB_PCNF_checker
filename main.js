@@ -33,5 +33,9 @@ function check() {
         }
     });
 
-    alert(uniqueLiterals.length + " == " + expectedCountOfLiteralsPerGroup);
+    if (uniqueLiterals.length == expectedCountOfLiteralsPerGroup) {
+        alert("This formula is not in principal conjunctive normal form");
+    } else {
+        alert("This formula is in principal conjunctive normal form");        
+    }
 }
