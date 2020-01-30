@@ -1,0 +1,36 @@
+* {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.button {
+    margin: 5px auto;
+  
+    display: block;
+    overflow: hidden;
+    outline: none;
+    
+    border: 3px solid #977bad;
+    border-radius: 2px;   
+}
+
+#pageTitle {
+    text-align: center;
+}
+
+span {
+    font-size: 24px;
+}
+
+#formula {
+    margin: 5px auto;
+
+    display: block;
+    overflow: hidden;
+    outline: none;
+
+    border: 3px solid #000000;
+    border-radius: 2px;
+
+    font-size: 24px;
+    width: 580px;
+}
