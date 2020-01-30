@@ -14,16 +14,22 @@ function check() {
         .filter(value => value && value !== ")" && value !== "(" && value !== "*");
 
     let countOfGroups = groups.length;
+    console.log(countOfGroups + " " + groups);
     let expectedCountOfLiteralsPerGroup = countOfGroups - 1;
 
-    let totalLiteralsCount = 0;
     let totalLiterals = [];
+    let totalLiteralsCount = 0;
 
     groups.forEach(value => {
         let literals = value.split('+').filter(value => value && value !== "+");
         totalLiterals.push(...literals);
         totalLiteralsCount += literals.length;
     });
+
+    if (totalLiteralsCount / countOfGroups != expectedCountOfLiteralsPerGroup) {
+        alert("Formula is not valid (contains syntax errors)");
+        return;
+    }
 
     let uniqueLiterals = [];
 
@@ -34,8 +40,8 @@ function check() {
     });
 
     if (uniqueLiterals.length == expectedCountOfLiteralsPerGroup) {
-        alert("This formula is not in principal conjunctive normal form");
+        alert("This formula is in principal conjunctive normal form");
     } else {
-        alert("This formula is in principal conjunctive normal form");        
+        alert("This formula is not in principal conjunctive normal form");        
     }
 }
