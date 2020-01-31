@@ -26,12 +26,16 @@ var quest = new Quest(getRandomInt(10));
 var currentQuestion = new Question();
 
 function next() {
+    highlightAnswer();
+    await new Promise(resolve => setTimeout(resolve, 5000));
+
     let answer = document.getElementById('answer').value;
     if (answer !== currentQuestion.answer) {
-        // ....
+        highlightError();
     }
     
     quest.nextQuestion();
+    refreshAnswers();
 }
 
 function generateQuestions(countOfQuestions) {
@@ -48,9 +52,11 @@ function generateQuestions(countOfQuestions) {
         //answer......
         //generate text......
 
-        //quest.addQuestion(new Question(text, isConjuctive));
-        var question = new Question("sdfsdfdsffs", isConjuctive);
-        quest.addQuestion(new Question(question));
+        var question = new Question(
+            generateFormula(countOfGroups, countOfArgs, isConjuctive), 
+            isConjuctive
+        );
+        quest.addQuestion(question);
         renderQuestion(question);
     }
     
@@ -64,6 +70,7 @@ function getRandomInt(max) {
 function generateFormula(countOfGroups, countOfArgs, isConjuctive) {
     // npm install randexp
     // generate formula based on regex & input parameters
+    let formula = "adfsdasdad";
 
     return formula;
 }
@@ -75,4 +82,13 @@ function renderQuestion(question) {
 
 function refreshAnswers() {
     // once render, on next() update radiobuttons state
+}
+
+function highlightAnswer() {
+    let answer = document.getElementById('answer').value;
+    
+}
+
+function highlightError() {
+    
 }
