@@ -1,20 +1,16 @@
-class Literal {
-    constructor(type, value) {
-        this.type = type;
-        this.value = value;
-    }
-}
-
-const LITERAL_TYPE = [ "sign", "var", "bracket" ]
-
 function check() {
     let formula = document.getElementById('formula').value;
+
+    if (formula.match(new RegExp('[^A-Z()|&!]'))) {
+        alert("Symbols must be from A to Z");
+        return;
+    }
+
     let groups = formula
         .split(new RegExp('\([^()]*\)'))
         .filter(value => value && value !== ")" && value !== "(" && value !== "&");
 
     let countOfGroups = groups.length;
-    console.log(countOfGroups + " " + groups);
     let expectedCountOfLiteralsPerGroup = countOfGroups - 1;
 
     let totalLiterals = [];
@@ -27,8 +23,8 @@ function check() {
     });
 
     if (totalLiteralsCount / countOfGroups != expectedCountOfLiteralsPerGroup) {
-        alert("Formula is not valid (contains syntax errors)");
-        console.log(groups)
+        alert("Formula is not valid (contains syntax errors) or has extra/less literals in subgroups");
+        console.log(groups);
         return;
     }
 
@@ -40,7 +36,7 @@ function check() {
         }
     });
 
-    console.log(expectedCountOfLiteralsPerGroup + " " + uniqueLiterals.length)
+    console.log(expectedCountOfLiteralsPerGroup + " " + uniqueLiterals.length);
 
     if (uniqueLiterals.length == expectedCountOfLiteralsPerGroup) {
         alert("This formula is in principal conjunctive normal form");
