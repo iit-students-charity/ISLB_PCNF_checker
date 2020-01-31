@@ -48,14 +48,10 @@ function generateQuestions(countOfQuestions) {
         countOfArgs = getRandomInt(4);
         isConjuctive = (Math.random() >= 0.5);
 
-        //generate formula......
-        //answer......
-        //generate text......
+        formula = generateFormula(countOfGroups, countOfArgs, isConjuctive);
+        answer = check(formula);
 
-        var question = new Question(
-            generateFormula(countOfGroups, countOfArgs, isConjuctive), 
-            isConjuctive
-        );
+        var question = new Question(formula, answer);
         quest.addQuestion(question);
         renderQuestion(question);
     }
@@ -90,5 +86,5 @@ function highlightAnswer() {
 }
 
 function highlightError() {
-    
+
 }
