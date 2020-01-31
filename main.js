@@ -15,16 +15,33 @@ function check() {
 
     let totalLiterals = [];
     let totalLiteralsCount = 0;
+    let literalGroups = [];
 
     groups.forEach(value => {
         let literals = value.split('|').filter(value => value && value !== "|");
+
         totalLiterals.push(...literals);
+        literalGroups.push(literals);
+
         totalLiteralsCount += literals.length;
     });
 
+    for (i = 0; i < literalGroups.length - 1; i++) {
+        for (j = i + 1; j < literalGroups.length; j++) {
+            if (compareArrays(literalGroups[i], literalGroups[j])) {
+                alert("Formula contains equal elementary disjunctions");
+                return;
+            }
+        }
+
+        if (new Set(literalGroups[i]).size !== expectedCountOfLiteralsPerGroup) {
+            alert("Subgroup N" + i + " contains extra/less/equal propositional vaiables");
+            return;
+        }
+    }
+
     if (totalLiteralsCount / countOfGroups != expectedCountOfLiteralsPerGroup) {
-        alert("Formula is not valid (contains syntax errors) or has extra/less literals in subgroups");
-        console.log(groups);
+        alert("Formula is not valid (contains syntax errors) or has extra/less subgroups or literals in subgroups");
         return;
     }
 
@@ -36,11 +53,21 @@ function check() {
         }
     });
 
-    console.log(expectedCountOfLiteralsPerGroup + " " + uniqueLiterals.length);
-
     if (uniqueLiterals.length == expectedCountOfLiteralsPerGroup) {
         alert("This formula is in principal conjunctive normal form");
     } else {
         alert("This formula is not in principal conjunctive normal form");        
     }
+}
+
+function compareArrays(array1, array2) {
+    var i = array1.length;
+
+    while (i--) {
+        if (array1[i] !== array2[i]) {
+            return false;
+        }
+    }
+
+    return true;
 }
