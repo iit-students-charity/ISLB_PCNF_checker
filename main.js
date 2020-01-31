@@ -1,6 +1,4 @@
-function check() {
-    let formula = document.getElementById('formula').value;
-
+function check(formula) {
     if (formula.match(new RegExp('[^A-Z()|&!]'))) {
         alert("Symbols must be from A to Z");
         return;
