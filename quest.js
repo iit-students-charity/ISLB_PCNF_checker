@@ -16,15 +16,20 @@ class Question {
     }
 }
 
-var quest = new Quest();
+var quest = new Quest(generateQuestions());
 var currentQuestion = new Question();
 
 function next() {
     let answer = document.getElementById('answer').value;
     if (answer !== currentQuestion.answer) {
         // ....
-        
+
     }
     
     quest.nextQuestion();
+}
+
+function generateQuestions() {
+    
+    return questions;
 }
