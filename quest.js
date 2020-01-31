@@ -29,7 +29,6 @@ function next() {
     let answer = document.getElementById('answer').value;
     if (answer !== currentQuestion.answer) {
         // ....
-
     }
     
     quest.nextQuestion();
@@ -49,7 +48,10 @@ function generateQuestions(countOfQuestions) {
         //answer......
         //generate text......
 
-        quest.addQuestion(new Question(text, answer));
+        //quest.addQuestion(new Question(text, isConjuctive));
+        var question = new Question("sdfsdfdsffs", isConjuctive);
+        quest.addQuestion(new Question(question));
+        renderQuestion(question);
     }
     
     return questions;
@@ -57,4 +59,20 @@ function generateQuestions(countOfQuestions) {
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max)) + 1;
+}
+
+function generateFormula(countOfGroups, countOfArgs, isConjuctive) {
+    // npm install randexp
+    // generate formula based on regex & input parameters
+
+    return formula;
+}
+
+// both of ans & que must be rendered on the page start
+function renderQuestion(question) {
+    // add dom elements
+}
+
+function refreshAnswers() {
+    // once render, on next() update radiobuttons state
 }
