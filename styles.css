@@ -50,3 +50,7 @@ body {
     flex: 1;
     flex-direction: column;
 }
+
+#answers {
+    text-align: center;
+}
