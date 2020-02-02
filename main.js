@@ -45,18 +45,7 @@ function compareArrays(array1, array2) {
     return true;
 }
 
-
 ///////////// quest.js
-
-class Quest {
-    constructor(countOfQuestions) {
-        this.questions = generateQuestions(countOfQuestions);
-    }
-
-    addQuestion(question) {
-        this.questions.push(question);
-    }
-}
 
 class Question {
     constructor(question, answer) {
@@ -65,54 +54,45 @@ class Question {
     }
 }
 
-var quest = new Quest(getRandomInt(10));
-var currentQuestion = new Question();
+var currentQuestion = new Question(null, false);
+var countOfQuestions = getRandomInt(10);
 var currentQuestionIndex = 0;
 
-var form = document.getElementById("answer");
+renderQuestion();
+refreshAnswers();
 
-form.addEventListener("submit", function(event) {
-  next();
-  event.preventDefault();
-}, false);
-
-
-function nextQuestion() {
-    currentQuestion = quest.questions[++currentQuestionIndex];
-}
+var form = document.getElementById('answer');
 
 function next() {
     highlightAnswer();
-    await new Promise(resolve => setTimeout(resolve, 5000));
 
-    let answer = document.getElementById('answer').value;
+    let answer = document.getElementById(currentQuestion.answer.toString()).value; // to bool
     if (answer !== currentQuestion.answer) {
         highlightError();
     }
-    
-    nextQuestion();
+
+    currentQuestionIndex = ++currentQuestionIndex;
+    if (currentQuestionIndex === countOfQuestions) {
+        // show results, end quest
+
+        return;
+    }
+
+    currentQuestion = generateQuestion();
+
+    renderQuestion();
     refreshAnswers();
 }
 
-function generateQuestions(countOfQuestions) {
-    let countOfGroups;
-    let countOfArgs;
-    let isConjuctive;
+function generateQuestion() {
+    let countOfGroups = getRandomInt(5);
+    let countOfArgs = getRandomInt(4);
+    let isConjuctive = (Math.random() >= 0.5);
 
-    for (i = 0; i < countOfQuestions; i++) {
-        countOfGroups = getRandomInt(5);
-        countOfArgs = getRandomInt(4);
-        isConjuctive = (Math.random() >= 0.5);
+    let formula = generateFormula(countOfGroups, countOfArgs, isConjuctive);
+    let answer = check(formula);
 
-        formula = generateFormula(countOfGroups, countOfArgs, isConjuctive);
-        answer = check(formula);
-
-        var question = new Question(formula, answer);
-        quest.addQuestion(question);
-        renderQuestion(question);
-    }
-    
-    return questions;
+    return new Question(formula, answer);
 }
 
 function getRandomInt(max) {
@@ -122,14 +102,13 @@ function getRandomInt(max) {
 function generateFormula(countOfGroups, countOfArgs, isConjuctive) {
     // npm install randexp
     // generate formula based on regex & input parameters
-    let formula = "adfsdasdad";
+    let formula = "ASD";
 
     return formula;
 }
 
-// both of ans & que must be rendered on the page start
-function renderQuestion(question) {
-    // add dom elements
+function renderQuestion() {
+    document.getElementById('formula').innerHTML = currentQuestion.formula;
 }
 
 function refreshAnswers() {
@@ -137,7 +116,7 @@ function refreshAnswers() {
 }
 
 function highlightAnswer() {
-    let answer = document.getElementById(currentQuestion.answer.toString()).value;
+    let answerElement = document.getElementById(currentQuestion.answer.toString());
     
 }
 
