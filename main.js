@@ -1,6 +1,11 @@
 function check(formula) {
     if (formula.match(new RegExp('[^A-Z()|&!]'))) {
-        alert("Symbols must be from A to Z");
+        alert("symbols must be from A to Z");
+        return;
+    }
+
+    if (!formula.match(new RegExp('^(\((!?[A-Z](\|(!?[A-Z]))*)\))(\&(\((!?[A-Z](\|(!?[A-Z]))*)\)))$'))) {
+        alert("invalid syntax");
         return;
     }
 
@@ -19,18 +24,18 @@ function check(formula) {
     for (i = 0; i < literalGroups.length - 1; i++) {
         for (j = i + 1; j < literalGroups.length; j++) {
             if (literalGroups[i].length !== literalGroups[j].length) {
-                alert("Not all of subgroups have equal count of variables");
+                alert("not all of subgroups have equal count of variables");
                 return;
             }
             
             if (compareArrays(literalGroups[i], literalGroups[j])) {
-                alert("Formula contains equal elementary disjunctions");
+                alert("formula contains equal elementary disjunctions");
                 return;
             }
         }
     }
 
-    alert("This function is in principal conjuctive normal form");
+    alert("this function is in principal conjuctive normal form");
 }
 
 function compareArrays(array1, array2) {
