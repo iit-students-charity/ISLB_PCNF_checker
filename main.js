@@ -5,7 +5,7 @@ var checkingMessages = [
     "not all of subgroups have equal count of variables", 
     "formula contains equal elementary disjunctions"];
 
-function check(formula) {
+function checkFormula(formula) {
     if (formula.match(new RegExp('[^A-Z()|&!]'))) {
         return 1;
     }
@@ -47,7 +47,7 @@ function check(formula) {
 }
 
 function check() {
-    let messageCode = check(document.getElementById('formula').value);
+    let messageCode = checkFormula(document.getElementById('formula').value);
     alert(checkingMessages[messageCode]);
 }
 
@@ -66,8 +66,8 @@ function compareArrays(array1, array2) {
 ///////////// quest.js
 
 class Question {
-    constructor(question, answer) {
-        this.question = question;
+    constructor(formula, answer) {
+        this.formula = formula;
         this.answer = answer;
     }
 }
@@ -77,19 +77,32 @@ var variablesCodes = [ 'A', 'B', 'C', 'D' ];
 var currentQuestion = generateQuestion();
 var countOfQuestions = getRandomInt(10);
 var currentQuestionIndex = 1;
+var correctAnswers = 0;
 
 renderQuestion();
 refreshAnswers();
 
 var form = document.getElementById('answer');
+var confirmButton = document.getElementById('confirmButton');
+var nextButton = document.getElementById('nextButton');
+
+function confirm() {
+
+    let currentAnswerElement = document.getElementById(currentQuestion.answer.toString());
+    let isCorrectAnswered = currentAnswerElement.checked;
+    highlight(isCorrectAnswered ? currentQuestion.answer.toString() : (!currentQuestion.answer).toString(), isCorrectAnswered ? 'greenyellow'  : 'red');
+
+    if (isCorrectAnswered) {
+        correctAnswers++;
+    }
+
+    confirmButton.hidden = true; 
+    nextButton.hidden = false;   
+}
 
 function next() {
-    highlightAnswer();
 
-    let answer = document.getElementById(currentQuestion.answer.toString()).value; // to bool
-    if (answer !== currentQuestion.answer) {
-        highlightError();
-    }
+    
 
     currentQuestionIndex = ++currentQuestionIndex;
     if (currentQuestionIndex === countOfQuestions) {
@@ -102,6 +115,9 @@ function next() {
 
     renderQuestion();
     refreshAnswers();
+
+    confirmButton.hidden = false;
+    nextButton.hidden = true;
 }
 
 function generateQuestion() {
@@ -109,7 +125,7 @@ function generateQuestion() {
     let countOfGroups = getRandomInt(Math.pow(2, countOfArgs));
 
     let formula = generateFormula(countOfGroups, countOfArgs);
-    let answer = check(formula);
+    let answer = checkFormula(formula) === 0 ? true : false;
 
     return new Question(formula, answer);
 }
@@ -121,11 +137,8 @@ function getRandomInt(max) {
 function generateFormula(countOfGroups, countOfArgs) {
     let formula = '';
 
-    console.log("groups, args " + countOfGroups + " " + countOfArgs);
-
     for (i = 0; i < countOfGroups; i++) {
         let group = '(';
-        console.log(i);
 
         let countOfArgsInParticualrGroup = countOfArgs - getRandomInt(countOfArgs) + 1;
         for (j = 0; j < countOfArgsInParticualrGroup; j++) {
@@ -142,12 +155,12 @@ function generateFormula(countOfGroups, countOfArgs) {
             formula += ((Math.random() >= 0.1) ? '&' : '|');
         }
     }
-    console.log(formula);
 
     return formula;
 }
 
 function renderQuestion() {
+    console.log(currentQuestion.formula);
     document.getElementById('formula').innerHTML = currentQuestion.formula;
 }
 
@@ -155,11 +168,7 @@ function refreshAnswers() {
     // once render, on next() update radiobuttons state
 }
 
-function highlightAnswer() {
-    let answerElement = document.getElementById(currentQuestion.answer.toString());
-    
-}
-
-function highlightError() {
-
+function highlight(answerId, color) {
+    let answerElement = document.getElementById(answerId + 'Label');
+    answerElement.style.color = color;
 }

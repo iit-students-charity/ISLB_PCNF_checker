@@ -21,7 +21,7 @@ span {
     font-size: 24px;
 }
 
-#formula {
+#formulaInput {
     margin: 5px auto;
 
     display: block;
@@ -46,15 +46,66 @@ a {
 }
 
 body {
+    height: 100vh;
     display: flex;
-    flex: 1;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#checking {
+    height: 700px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-direction: column;
 }
 
-#answers {
+#questLink, #pageTitle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+
+
+
+#answer {
     text-align: center;
 }
 
 #question {
+    height: 200px;
     text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+
+#formula {
+    margin: 5px auto;
+
+    display: block;
+    overflow: hidden;
+    outline: none;
+
+    color: #977bad;
+    border-radius: 2px;
+
+    font-size: 24px;
+    width: 580px;
+}
+
+#answer {
+    height: 200px;
+}
+
+#trueLabel, #falseLabel {
+    font-size: 24px;
+}
+
+.radio {
+	width: 24px;
+    height: 24px;
 }
