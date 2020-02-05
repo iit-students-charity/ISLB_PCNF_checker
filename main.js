@@ -1,19 +1,37 @@
+/////////////////////////////////////////////////////////////////////////////////////
+// Лабораторная работа 1 по дисциплине ЛОИС
+// Выполнена студенткой группы 721702 БГУИР Стрижич Анжелика Олеговна
+// Файл содержит функции парсинга строки для проверки формулы СКНФ и функции обработки тестовых заданий
+// 05.02.2020
+
 var checkingMessages = [ 
     "this function is in principal conjuctive normal form",
     "symbols must be from A to Z", 
     "formula has groups divided by '|'", 
     "not all of subgroups have equal count of variables", 
-    "formula contains equal elementary disjunctions"];
+    "formula contains equal elementary disjunctions",
+    "formula must end with ')' followed by variables",
+    "all symbols must be divided by '|' or '&' or end with ')'",
+    "formula must start with '(' and variables for next",
+    "some groups have extra (different from other groups sets) variables"
+];
 
 function checkFormula(formula) {
     if (formula.match(new RegExp('[^A-Z()|&!]'))) {
         return 1;
     }
 
-    // if (!formula.match(new RegExp('^(\((!?[A-Z](\|(!?[A-Z]))*)\))(\&(\((!?[A-Z](\|(!?[A-Z]))*)\)))*$'))) {
-    //     alert("invalid syntax");
-    //     return;
-    // }
+    if (!formula.match(new RegExp('[A-Z]\\)$'))) {
+        return 5;
+    }
+
+    if (formula.match(new RegExp('[A-Z][^|&)]'))) {
+        return 6;
+    }
+
+    if (!formula.match(new RegExp('^\\([A-Z]'))) {
+        return 7;
+    }
 
     let groups = formula
         .split(new RegExp('\([^()]*\)'))
@@ -40,6 +58,14 @@ function checkFormula(formula) {
             if (compareArrays(literalGroups[i], literalGroups[j])) {
                 return 4;
             }
+
+            literalGroups[i].forEach(value => value = value.replace('!', ''));
+            literalGroups[j].forEach(value => literalGroups[j][literalGroups[j].indexOf(value)] = value.replace('!', ''));
+            console.log(literalGroups[j]);
+
+            if (!compareArrays(literalGroups[i], literalGroups[j])) {
+                return 8;
+            }
         }
     }
 
@@ -47,7 +73,7 @@ function checkFormula(formula) {
 }
 
 function check() {
-    let messageCode = checkFormula(document.getElementById('formula').value);
+    let messageCode = checkFormula(document.getElementById('formulaInput').value);
     alert(checkingMessages[messageCode]);
 }
 
