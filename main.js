@@ -103,7 +103,7 @@ function confirm() {
     }
 
     confirmButton.style.display = 'none'; 
-    nextButton.style.display = 'initial';
+    nextButton.style.display = 'flex';
 }
 
 function next() {
@@ -122,7 +122,7 @@ function next() {
     renderQuestion();
     refreshAnswers();
 
-    confirmButton.style.display = 'initial';
+    confirmButton.style.display = 'flex';
     nextButton.style.display = 'none';
 }
 
