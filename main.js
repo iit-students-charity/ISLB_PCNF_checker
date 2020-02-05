@@ -75,39 +75,45 @@ class Question {
 var variablesCodes = [ 'A', 'B', 'C', 'D' ];
 
 var currentQuestion = generateQuestion();
-var countOfQuestions = getRandomInt(10);
+var countOfQuestions = 10;
 var currentQuestionIndex = 1;
 var correctAnswers = 0;
 
 renderQuestion();
 refreshAnswers();
 
-var form = document.getElementById('answer');
 var confirmButton = document.getElementById('confirmButton');
 var nextButton = document.getElementById('nextButton');
+var questSection = document.getElementById('questSection');
+var resultSection = document.getElementById('resultSection');
+
+nextButton.style.display = 'none';
+resultSection.style.display = 'none';
 
 function confirm() {
-
     let currentAnswerElement = document.getElementById(currentQuestion.answer.toString());
     let isCorrectAnswered = currentAnswerElement.checked;
-    highlight(isCorrectAnswered ? currentQuestion.answer.toString() : (!currentQuestion.answer).toString(), isCorrectAnswered ? 'greenyellow'  : 'red');
+    highlight(
+        isCorrectAnswered ? currentQuestion.answer.toString() : (!currentQuestion.answer).toString(),
+        isCorrectAnswered ? 'greenyellow' : 'red'
+        );
 
     if (isCorrectAnswered) {
         correctAnswers++;
     }
 
-    confirmButton.hidden = true; 
-    nextButton.hidden = false;   
+    confirmButton.style.display = 'none'; 
+    nextButton.style.display = 'initial';
 }
 
 function next() {
-
-    
-
-    currentQuestionIndex = ++currentQuestionIndex;
+    ++currentQuestionIndex;
     if (currentQuestionIndex === countOfQuestions) {
-        // show results, end quest
+        document.getElementById('score').innerHTML = 10 * correctAnswers / countOfQuestions;
 
+        questSection.style.display = 'none';
+        resultSection.style.display = 'flex';
+        document.
         return;
     }
 
@@ -116,8 +122,8 @@ function next() {
     renderQuestion();
     refreshAnswers();
 
-    confirmButton.hidden = false;
-    nextButton.hidden = true;
+    confirmButton.style.display = 'initial';
+    nextButton.style.display = 'none';
 }
 
 function generateQuestion() {
@@ -160,12 +166,14 @@ function generateFormula(countOfGroups, countOfArgs) {
 }
 
 function renderQuestion() {
-    console.log(currentQuestion.formula);
     document.getElementById('formula').innerHTML = currentQuestion.formula;
 }
 
 function refreshAnswers() {
-    // once render, on next() update radiobuttons state
+    document.getElementById(currentQuestion.answer.toString() + 'Label').style.color = 'black';
+    document.getElementById((!currentQuestion.answer).toString() + 'Label').style.color = 'black';
+    document.getElementById(currentQuestion.answer.toString()).checked = false;
+    document.getElementById((!currentQuestion.answer).toString()).checked = false;
 }
 
 function highlight(answerId, color) {
