@@ -59,7 +59,7 @@ function checkFormula(formula) {
                 return 4;
             }
 
-            literalGroups[i].forEach(value => value = value.replace('!', ''));
+            literalGroups[i].forEach(value => literalGroups[j][literalGroups[j].indexOf(value)] = value.replace('!', ''));
             literalGroups[j].forEach(value => literalGroups[j][literalGroups[j].indexOf(value)] = value.replace('!', ''));
             console.log(literalGroups[j]);
 
