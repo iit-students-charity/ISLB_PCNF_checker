@@ -59,11 +59,13 @@ function checkFormula(formula) {
                 return 4;
             }
 
-            literalGroups[i].forEach(value => literalGroups[j][literalGroups[j].indexOf(value)] = value.replace('!', ''));
-            literalGroups[j].forEach(value => literalGroups[j][literalGroups[j].indexOf(value)] = value.replace('!', ''));
-            console.log(literalGroups[j]);
+            let iLiteralsCopy = [];
+            let jLiteralsCopy = [];
 
-            if (!compareArrays(literalGroups[i], literalGroups[j])) {
+            literalGroups[i].forEach(value => iLiteralsCopy.push(value.replace('!', '')));
+            literalGroups[j].forEach(value => jLiteralsCopy.push(value.replace('!', '')));
+
+            if (!compareArrays(iLiteralsCopy, jLiteralsCopy)) {
                 return 8;
             }
         }
