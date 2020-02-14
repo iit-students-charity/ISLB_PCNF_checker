@@ -5,23 +5,25 @@
 // 05.02.2020
 
 var checkingMessages = [ 
-    "this function is in principal conjuctive normal form",
-    "symbols must be from A to Z", 
-    "formula has groups divided by '|'", 
-    "not all of subgroups have equal count of variables", 
-    "formula contains equal elementary disjunctions",
-    "formula must end with ')' followed by variables",
-    "all symbols must be divided by '|' or '&' or end with ')'",
-    "formula must start with '(' and variables for next",
-    "some groups have extra (different from other groups sets) variables"
+    "this function is in principal conjuctive normal form", // 0
+    "invalid symbols", // 1
+    "formula has groups divided by '|'", // 2
+    "not all of subgroups have equal count of variables", // 3
+    "formula contains equal elementary disjunctions", // 4
+    "formula must end with ')' followed by variables", // 5
+    "all symbols must be divided by '|' or '&' or end with ')'", // 6
+    "formula must start with '(' and variables for next", // 7
+    "some groups have extra (different from other groups sets) variables", // 8
+    "all of binary operations have to be braced", // 9
+    "all of negations have to be braced", // 10
 ];
 
 function checkFormula(formula) {
-    if (formula.match(new RegExp('[^A-Z()|&!]'))) {
+    if (formula.match(new RegExp('([^A-Z()|&!~]|->)'))) {
         return 1;
     }
 
-    if (!formula.match(new RegExp('[A-Z]\\)$'))) {
+    if (!formula.match(new RegExp('[A-Z)]\\)$'))) {
         return 5;
     }
 
@@ -29,8 +31,16 @@ function checkFormula(formula) {
         return 6;
     }
 
-    if (!formula.match(new RegExp('^\\([A-Z]'))) {
+    if (!formula.match(new RegExp('^\\([!A-Z]'))) {
         return 7;
+    }
+
+    if (formula.match(new RegExp('[^()].*[&|]].*[^)]'))) {
+        return 9;
+    }
+
+    if (formula.match(new RegExp('[^(]!.*[^)]'))) {
+        return 10;
     }
 
     let groups = formula
