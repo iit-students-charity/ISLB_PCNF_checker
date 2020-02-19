@@ -40,7 +40,7 @@ function checkFormula(formula) {
     //     return 7;
     // }
 
-    if (formula.match(/[^()].*[&|]].*[^)]/)) {
+    if (formula.match(/[^()].*[&|].*[^)]/)) {
         return 9;
     }
 
@@ -50,8 +50,8 @@ function checkFormula(formula) {
 
     formula = formula.replace(/\((![A-Z])\)/g, '\$1');
 
-    while (formula.match(/\((!?.*([&|]|->)!?.*)\)/g)) {
-        formula = formula.replace(/\(((!?.*)([&|]|->)(!?.*))\)(?=([&|]|->))/g, '\$1');
+    while (formula.match(/(\(+))\((!?[A-Z]([&|]|->)!?[A-Z])\)/g)) {
+        formula = formula.replace(/(\(+)\((!?[A-Z]([&|]|->)!?[A-Z])\)([|&]|->)/g, '\$1\$2\$4');
         //formula = formula.replace(/(?<=[&|]|->)\(((!?.*)([&|]|->)(!?.*))\)(?=\)+)/g, '\$2');
     }
     console.log(formula);
