@@ -35,6 +35,12 @@ span {
     width: 580px;
 }
 
+#messageText {
+    text-align: center;
+    font-weight: bold;
+    font-size: 22pt;
+}
+
 a {
     text-decoration: none;
     color: #977bad;

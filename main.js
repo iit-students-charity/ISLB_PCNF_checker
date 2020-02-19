@@ -16,9 +16,14 @@ var checkingMessages = [
     "some groups have extra (different from other groups sets) variables", // 8
     "all of binary operations have to be braced", // 9
     "all of negations have to be braced", // 10
+    "enter formula", // 11
 ];
 
 function checkFormula(formula) {
+    if (!formula) {
+        return 11;
+    }
+
     if (formula.match(new RegExp('([^A-Z()|&!~]|->)'))) {
         return 1;
     }
@@ -85,8 +90,10 @@ function checkFormula(formula) {
 }
 
 function check() {
+    let messageText = document.getElementById('messageText');
     let messageCode = checkFormula(document.getElementById('formulaInput').value);
-    alert(checkingMessages[messageCode]);
+    messageText.innerHTML = checkingMessages[messageCode];
+    messageText.style.color = (messageCode == 0 ? '#b9fdc5' : '#eebebe');
 }
 
 function compareArrays(array1, array2) {
