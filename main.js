@@ -24,32 +24,41 @@ function checkFormula(formula) {
         return 11;
     }
 
-    if (formula.match(new RegExp('([^A-Z()|&!~]|->)'))) {
+    if (formula.match(/([^A-Z()|&!~]|->)/)) {
         return 1;
     }
 
-    if (!formula.match(new RegExp('[A-Z)]\\)$'))) {
-        return 5;
-    }
+    // if (!formula.match(/[A-Z)]\\)$/)) {
+    //     return 5;
+    // }
 
-    if (formula.match(new RegExp('[A-Z][^|&)]'))) {
+    if (formula.match(/[A-Z][^|&)]/)) {
         return 6;
     }
 
-    if (!formula.match(new RegExp('^\\([!A-Z]'))) {
-        return 7;
-    }
+    // if (!formula.match(new RegExp('^\\([!A-Z]'))) {
+    //     return 7;
+    // }
 
-    if (formula.match(new RegExp('[^()].*[&|]].*[^)]'))) {
+    if (formula.match(/[^()].*[&|]].*[^)]/)) {
         return 9;
     }
 
-    if (formula.match(new RegExp('[^(]!.*[^)]'))) {
+    if (formula.match(/[^(]!.*[^)]/)) {
         return 10;
     }
 
+    formula = formula.replace(/\((![A-Z])\)/g, '\$1');
+
+    while (formula.match(/\((!?.*([&|]|->)!?.*)\)/g)) {
+        formula = formula.replace(/\(((!?.*)([&|]|->)(!?.*))\)(?=([&|]|->))/g, '\$1');
+        //formula = formula.replace(/(?<=[&|]|->)\(((!?.*)([&|]|->)(!?.*))\)(?=\)+)/g, '\$2');
+    }
+    console.log(formula);
+    
+
     let groups = formula
-        .split(new RegExp('\([^()]*\)'))
+        .split(/\([^()]*\)/)
         .filter(value => value && value !== ")" && value !== "(" && value !== "&");
 
     if (groups.indexOf('|') !== -1) {
