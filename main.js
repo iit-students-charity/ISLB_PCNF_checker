@@ -16,7 +16,9 @@ var checkingMessages = [
     "some groups have extra (different from other groups sets) variables", // 8
     "all of binary operations have to be braced", // 9
     "all of negations have to be braced", // 10
-    "enter formula", // 11
+    "enter formula", // 11,
+    "formula contains complex negations", // 12,
+    "formula has unmatched operators", // 13,
 ];
 
 function checkFormula(formula) {
@@ -26,6 +28,10 @@ function checkFormula(formula) {
 
     if (formula.match(/([^A-Z()|&!~]|->)/)) {
         return 1;
+    }
+    
+    if (formula.match(/!\(/)) {
+        return 12;
     }
 
     // if (!formula.match(/[A-Z)]\\)$/)) {
@@ -40,22 +46,56 @@ function checkFormula(formula) {
     //     return 7;
     // }
 
-    if (formula.match(/[^()].*[&|].*[^)]/)) {
-        return 9;
-    }
-
     if (formula.match(/[^(]!.*[^)]/)) {
         return 10;
     }
 
-    formula = formula.replace(/\((![A-Z])\)/g, '\$1');
-
-    while (formula.match(/(\(+))\((!?[A-Z]([&|]|->)!?[A-Z])\)/g)) {
-        formula = formula.replace(/(\(+)\((!?[A-Z]([&|]|->)!?[A-Z])\)([|&]|->)/g, '\$1\$2\$4');
-        //formula = formula.replace(/(?<=[&|]|->)\(((!?.*)([&|]|->)(!?.*))\)(?=\)+)/g, '\$2');
-    }
+    // ((x|y) | z) = _(x|y) | z_
+    formula = formula.replace(/\((.*)\)/, '_\$1_');
     console.log(formula);
+
+    // (!x) = !x
+    formula = formula.replace(/\((![A-Z])\)/g, '\$1');
+    console.log(formula);
+
+    let formulaCopy = formula;
+    let oldFormulaCopy;
+
+    while (oldFormulaCopy != formula) {
+        oldFormulaCopy = formulaCopy;
+        formulaCopy = formulaCopy.replace(/(\(![A-Z]\)|\((([A-Z]|\(![A-Z]\))\|([A-Z]|\(![A-Z]\)))\))/g, 'X');
+    }
+
+    if (formulaCopy == 'X') {
+        // 5 point
+    } else {
+        while (oldFormulaCopy != formula) {
+            oldFormulaCopy = formulaCopy;
+            formulaCopy = formulaCopy.replace(/\([A-Z](&[A-Z])*\)/g, 'X');
+        }
     
+        if (formulaCopy != 'X') {
+            return 13;
+        }
+    }
+
+    
+
+    // x | !x = x
+    formulaCopy = formula.replace(/([A-Z])\|!\1/g, '\$1');
+    console.log(formula);
+
+    // x & !x = !x
+    formula = formula.replace(/([A-Z])\&!\1/g, '!\$1');
+    console.log(formula);
+
+    if (formula.match(/[^(]!?[A-Z]([&|~]|->)!?[A-Z][^)]/)) {
+        return 9;
+    }
+
+    // formula = formula.replace(//, '');
+
+    // parsing exactly
 
     let groups = formula
         .split(/\([^()]*\)/)
