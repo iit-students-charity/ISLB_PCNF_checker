@@ -7,7 +7,7 @@
 var checkingMessages = [ 
     "this function is in principal conjuctive normal form", // 0
     "invalid symbols", // 1
-    "formula has groups divided by '|'", // 2
+    "formula has groups divided by '|', '->' or '~'", // 2
     "not all of subgroups have equal count of variables", // 3
     "formula contains equal elementary disjunctions", // 4
     "formula must end with ')' followed by variables", // 5
@@ -50,60 +50,27 @@ function checkFormula(formula) {
         return 10;
     }
 
-    // ((x|y) | z) = _(x|y) | z_
-    formula = formula.replace(/\((.*)\)/, '_\$1_');
-    console.log(formula);
+    // ((x|y) | z) = (x|y) | z
+    formula = formula.replace(/\((.*)\)/, '\$1');
 
     // (!x) = !x
     formula = formula.replace(/\((![A-Z])\)/g, '\$1');
-    console.log(formula);
-
-    let formulaCopy = formula;
-    let oldFormulaCopy;
-
-    while (oldFormulaCopy != formula) {
-        oldFormulaCopy = formulaCopy;
-        formulaCopy = formulaCopy.replace(/(\(![A-Z]\)|\((([A-Z]|\(![A-Z]\))\|([A-Z]|\(![A-Z]\)))\))/g, 'X');
-    }
-
-    if (formulaCopy == 'X') {
-        // 5 point
-    } else {
-        while (oldFormulaCopy != formula) {
-            oldFormulaCopy = formulaCopy;
-            formulaCopy = formulaCopy.replace(/\([A-Z](&[A-Z])*\)/g, 'X');
-        }
-    
-        if (formulaCopy != 'X') {
-            return 13;
-        }
-    }
-
-    
-
-    // x | !x = x
-    formulaCopy = formula.replace(/([A-Z])\|!\1/g, '\$1');
-    console.log(formula);
-
-    // x & !x = !x
-    formula = formula.replace(/([A-Z])\&!\1/g, '!\$1');
-    console.log(formula);
 
     if (formula.match(/[^(]!?[A-Z]([&|~]|->)!?[A-Z][^)]/)) {
         return 9;
     }
 
-    // formula = formula.replace(//, '');
-
     // parsing exactly
+    let dirtyGroups = formula.split(/\)([&|~]|->)\(/g);
+    if (dirtyGroups.indexOf)
+    console.log(dirtyGroups + ' --- ');
+    
 
-    let groups = formula
-        .split(/\([^()]*\)/)
-        .filter(value => value && value !== ")" && value !== "(" && value !== "&");
-
-    if (groups.indexOf('|') !== -1) {
-        return 2;
-    }
+    let groups = [];
+    dirtyGroups.forEach(group => {
+        console.log(group)
+        groups.push(group.replace(/[()]/g, ''));
+    });
 
     let literalGroups = [];
 
