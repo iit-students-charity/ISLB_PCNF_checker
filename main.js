@@ -10,16 +10,16 @@ var checkingMessages = [
     "formula has groups divided by '|', '->' or '~'", // 2
     "not all of subgroups have equal count of variables", // 3
     "formula contains equal elementary disjunctions", // 4
-    "formula must end with ')' followed by variables", // 5
-    "all symbols must be divided by '&', '|', '~' or '->'", // 6
-    "formula must start with '(' and variables for next", // 7
+    "invalid syntax: formula must end with ')' followed by variables", // 5
+    "invalid syntax: all symbols must be divided by '&', '|', '~' or '->'", // 6
+    "invalid syntax: formula must start with '(' and variables for next", // 7
     "some groups have extra (different from other groups sets) variables", // 8
-    "all of binary operations have to be braced", // 9
-    "all of negations have to be braced", // 10
+    "invalid syntax: all of binary operations have to be braced", // 9
+    "invalid syntax: all of negations have to be braced", // 10
     "enter formula", // 11
-    "formula contains complex negations", // 12
+    "invalid syntax: formula contains complex negations", // 12
     "formula has unmatched operators", // 13
-    "all groups have to be divided by '&', '|', '~' or '->'", // 14
+    "invalid syntax: all groups have to be divided by '&', '|', '~' or '->'", // 14
 ];
 
 function checkSyntax(formula) {
@@ -47,7 +47,7 @@ function checkSyntax(formula) {
         return 6;
     }
 
-    if (formula.match(/[^(]!.*[^)]/)) {
+    if (formula.match(/[^(]![A-B]/) || formula.match(/![A-B][^)]/)) {
         return 10;
     }
 
@@ -64,7 +64,10 @@ function checkFormula(formula) {
     if (isSyntaxValid !== 0) {
         return isSyntaxValid;
     }
-    
+
+    if (formula.match(/[A-Z]([])/)) {
+        return 9;
+    }
 
     // ((x|y) | z) = (x|y) | z
     formula = formula.replace(/\((.*)\)/, '\$1');
