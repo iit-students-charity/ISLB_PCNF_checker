@@ -14,26 +14,27 @@ var checkingMessages = [
     "invalid syntax: all symbols must be divided by '&', '|', '~' or '->'", // 6
     "invalid syntax: formula must start with '(' and variables for next", // 7
     "some groups have extra (different from other groups sets) variables", // 8
-    "invalid syntax: all of binary operations have to be braced", // 9
-    "invalid syntax: all of negations have to be braced", // 10
+    "invalid syntax: all binary operations have to be braced", // 9
+    "invalid syntax: all negations have to be braced", // 10
     "enter formula", // 11
     "invalid syntax: formula contains complex negations", // 12
     "formula has unmatched operators", // 13
     "invalid syntax: all groups have to be divided by '&', '|', '~' or '->'", // 14
     "expected disjunctions contain '&', '~' or '->'", // 15
+    "formula consists of single symbol or single non-disjunction expression", // 16
 ];
 
 function checkSyntax(formula) {
-    if (!formula.match(/[A-Z)]\)$/)) {
-        return 5;
+    if (!formula.match(/^([A-Z()|&!~]|->)*$/g)) {
+        return 1;
     }
 
     if (!formula.match(/^\([A-Z(]/)) {
         return 7;
     }
 
-    if (!formula.match(/^([A-Z()|&!~]|->)*$/g)) {
-        return 1;
+    if (!formula.match(/[A-Z)]\)$/)) {
+        return 5;
     }
     
     if (formula.match(/!\(/)) {
@@ -52,7 +53,20 @@ function checkSyntax(formula) {
         return 10;
     }
 
+    if (formula.match(/^\(([A-Z])(([&~]|->)(?!!\1)!?[A-Z])?\)$/)) {
+        return 16;
+    }
+
     return 0;
+}
+
+function debrace(formula) {
+    // ((x|y) | z) = (x|y) | z
+    formula = formula.replace(/\((.*)\)/, '\$1');
+    // (!x) = !x
+    formula = formula.replace(/\((![A-Z])\)/g, '\$1');
+
+    return formula;
 }
 
 function checkFormula(formula) {
@@ -66,19 +80,13 @@ function checkFormula(formula) {
         return isSyntaxValid;
     }
 
-    if (formula.match(/[A-Z]([])/)) {
-        return 9;
-    }
-
-    // ((x|y) | z) = (x|y) | z
-    formula = formula.replace(/\((.*)\)/, '\$1');
-
-    // (!x) = !x
-    formula = formula.replace(/\((![A-Z])\)/g, '\$1');
-
+    console.log(formula)
+    formula = debrace(formula);
+    
     if (formula.match(/[^(]!?[A-Z]([&|~]|->)!?[A-Z][^)]/)) {
         return 9;
     }
+    console.log(formula)
 
     // parsing exactly
     let dirtyGroups = formula.split(/\)([&|~]|->)\(/g);    
@@ -158,7 +166,7 @@ class Question {
     }
 }
 
-var variablesCodes = [ 'A', 'B', 'C', 'D' ];
+var variablesCodes = [ 'A', 'B', 'C' ];
 
 var currentQuestion = generateQuestion();
 var countOfQuestions = 10;
@@ -213,7 +221,7 @@ function next() {
 }
 
 function generateQuestion() {
-    let countOfArgs = getRandomInt(3);
+    let countOfArgs = getRandomInt(2);
     let countOfGroups = getRandomInt(Math.pow(2, countOfArgs));
 
     let formula = generateFormula(countOfGroups, countOfArgs);
@@ -230,21 +238,30 @@ function generateFormula(countOfGroups, countOfArgs) {
     let formula = '';
 
     for (i = 0; i < countOfGroups; i++) {
-        let group = '(';
+        let countOfArgsInParticualarGroup = countOfArgs - getRandomInt(countOfArgs) + 1;
+        let group = '';
 
-        let countOfArgsInParticualrGroup = countOfArgs - getRandomInt(countOfArgs) + 1;
-        for (j = 0; j < countOfArgsInParticualrGroup; j++) {
+        if (countOfArgsInParticualarGroup !== 1) {
+            group += '(';
+        }
+
+        for (j = 0; j < countOfArgsInParticualarGroup; j++) {
             let isNegative = (Math.random() >= 0.5);
-            group += (isNegative ? '!' : '') + variablesCodes[j];
-            if (j < countOfArgsInParticualrGroup - 1) {
-                group += ((Math.random() >= 0.1) ? '|' : '&');
+            group += (isNegative ? '(!' : '') + variablesCodes[j] + (isNegative ? ')' : '');
+            if (j < countOfArgsInParticualarGroup - 1) {
+                let random  = Math.random();
+                group += ((random >= 0.2) ? '|' : (random >= 0.1 ? '&' : (random >= 0.05 ? '~' : '->')));
             }
         }
 
-        group += ')';
+        if (countOfArgsInParticualarGroup !== 1) {
+            group += ')';
+        }
         formula += group;
+
         if (i < countOfGroups - 1) {
-            formula += ((Math.random() >= 0.1) ? '&' : '|');
+            let random  = Math.random();
+            formula += ((random >= 0.3) ? '|' : (random >= 0.2 ? '&' : (random >= 0.1 ? '~' : '->')));
         }
     }
 
