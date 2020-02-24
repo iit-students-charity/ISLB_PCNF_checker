@@ -26,7 +26,7 @@ function checkFormula(formula) {
         return 11;
     }
 
-    if (formula.match(/([^A-Z()|&!~]|->)/)) {
+    if (!formula.match(/^([A-Z()|&!~]|->)*$/g)) {
         return 1;
     }
     
@@ -61,16 +61,18 @@ function checkFormula(formula) {
     }
 
     // parsing exactly
-    let dirtyGroups = formula.split(/\)([&|~]|->)\(/g);
-    if (dirtyGroups.indexOf)
-    console.log(dirtyGroups + ' --- ');
-    
+    let dirtyGroups = formula.split(/\)([&|~]|->)\(/g);    
 
     let groups = [];
     dirtyGroups.forEach(group => {
-        console.log(group)
         groups.push(group.replace(/[()]/g, ''));
     });
+
+    if (groups.indexOf('|') !== -1 || groups.indexOf('->') !== -1 || groups.indexOf('~') !== -1) {
+        return 2;
+    }
+
+    groups = groups.filter(group => group !== '&');
 
     let literalGroups = [];
 
@@ -79,6 +81,7 @@ function checkFormula(formula) {
 
         literalGroups.push(literals);
     });
+    console.log(groups);
 
     for (i = 0; i < literalGroups.length - 1; i++) {
         for (j = i + 1; j < literalGroups.length; j++) {
