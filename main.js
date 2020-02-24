@@ -2,7 +2,7 @@
 // Лабораторная работа 1 по дисциплине ЛОИС
 // Выполнена студенткой группы 721702 БГУИР Стрижич Анжелика Олеговна
 // Файл содержит функции парсинга строки для проверки формулы СКНФ и функции обработки тестовых заданий
-// 05.02.2020
+// 24.02.2020
 
 var checkingMessages = [ 
     "this function is in principal conjuctive normal form", // 0
@@ -11,19 +11,24 @@ var checkingMessages = [
     "not all of subgroups have equal count of variables", // 3
     "formula contains equal elementary disjunctions", // 4
     "formula must end with ')' followed by variables", // 5
-    "all symbols must be divided by '|' or '&' or end with ')'", // 6
+    "all symbols must be divided by '&', '|', '~' or '->'", // 6
     "formula must start with '(' and variables for next", // 7
     "some groups have extra (different from other groups sets) variables", // 8
     "all of binary operations have to be braced", // 9
     "all of negations have to be braced", // 10
-    "enter formula", // 11,
-    "formula contains complex negations", // 12,
-    "formula has unmatched operators", // 13,
+    "enter formula", // 11
+    "formula contains complex negations", // 12
+    "formula has unmatched operators", // 13
+    "all groups have to be divided by '&', '|', '~' or '->'", // 14
 ];
 
-function checkFormula(formula) {
-    if (!formula) {
-        return 11;
+function checkSyntax(formula) {
+    if (!formula.match(/[A-Z)]\)$/)) {
+        return 5;
+    }
+
+    if (!formula.match(/^\([A-Z(]/)) {
+        return 7;
     }
 
     if (!formula.match(/^([A-Z()|&!~]|->)*$/g)) {
@@ -34,21 +39,32 @@ function checkFormula(formula) {
         return 12;
     }
 
-    // if (!formula.match(/[A-Z)]\\)$/)) {
-    //     return 5;
-    // }
-
-    if (formula.match(/[A-Z][^|&)]/)) {
-        return 6;
+    if (formula.match(/\)\(/)) {
+        return 14;
     }
 
-    // if (!formula.match(new RegExp('^\\([!A-Z]'))) {
-    //     return 7;
-    // }
+    if (formula.match(/[A-Z]([^|&~]|(?!->))[A-Z]/)) {
+        return 6;
+    }
 
     if (formula.match(/[^(]!.*[^)]/)) {
         return 10;
     }
+
+    return 0;
+}
+
+function checkFormula(formula) {
+    if (!formula) {
+        return 11;
+    }
+
+    // syntax check
+    let isSyntaxValid = checkSyntax(formula);
+    if (isSyntaxValid !== 0) {
+        return isSyntaxValid;
+    }
+    
 
     // ((x|y) | z) = (x|y) | z
     formula = formula.replace(/\((.*)\)/, '\$1');
