@@ -29,7 +29,7 @@ function checkSyntax(formula) {
         return 1;
     }
 
-    if (!formula.match(/^\([A-Z(]/)) {
+    if (!formula.match(/^\((\(*|[A-Z]|\(!?[A-Z]\))/)) {
         return 7;
     }
 
@@ -80,13 +80,17 @@ function checkFormula(formula) {
         return isSyntaxValid;
     }
 
-    console.log(formula)
     formula = debrace(formula);
+    let formulaCopy = formula;
+
+    while (formulaCopy.match(/[A-Z]/g)) {
+        formulaCopy = formulaCopy.replace(/\(!?[A-Z]([&|~]|->)!?[A-Z]\)/g, '1');
+        console.log(formulaCopy);
+    }
     
-    if (formula.match(/[^(]!?[A-Z]([&|~]|->)!?[A-Z][^)]/)) {
+    if (formulaCopy.indexOf('1') !== -1) {
         return 9;
     }
-    console.log(formula)
 
     // parsing exactly
     let dirtyGroups = formula.split(/\)([&|~]|->)\(/g);    
