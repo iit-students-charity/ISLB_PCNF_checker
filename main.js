@@ -20,6 +20,7 @@ var checkingMessages = [
     "invalid syntax: formula contains complex negations", // 12
     "formula has unmatched operators", // 13
     "invalid syntax: all groups have to be divided by '&', '|', '~' or '->'", // 14
+    "expected disjunctions contain '&', '~' or '->'", // 15
 ];
 
 function checkSyntax(formula) {
@@ -92,19 +93,21 @@ function checkFormula(formula) {
     }
 
     groups = groups.filter(group => group !== '&');
-
     let literalGroups = [];
 
     groups.forEach(value => {
         let literals = value.split('|').filter(value => value && value !== "|");
-
         literalGroups.push(literals);
     });
-    console.log(groups);
 
     for (i = 0; i < literalGroups.length - 1; i++) {
+        if (literalGroups[i][0].match(/[&~]|->/)) {
+            return 15;
+        }
+
         for (j = i + 1; j < literalGroups.length; j++) {
             if (literalGroups[i].length !== literalGroups[j].length) {
+                console.log(literalGroups[i] + ' ' + literalGroups[j])
                 return 3;
             }
             
