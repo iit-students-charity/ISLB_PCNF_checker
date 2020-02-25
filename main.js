@@ -14,7 +14,7 @@ var checkingMessages = [
     "invalid syntax: all symbols must be divided by '&', '|', '~' or '->'", // 6
     "invalid syntax: formula must start with '(' and variables for next", // 7
     "some groups have extra (different from other groups sets) variables", // 8
-    "invalid syntax: all binary operations have to be braced", // 9
+    "invalid syntax: braces missing", // 9
     "invalid syntax: all negations have to be braced", // 10
     "enter formula", // 11
     "invalid syntax: formula contains complex negations", // 12
@@ -61,6 +61,21 @@ function checkSyntax(formula) {
     return 0;
 }
 
+function checkPairingBraces(formula) {
+    let countOfOpenBraces = formula.split('(').length - 1;
+    let countOfCloseBraces = formula.split(')').length - 1;
+    
+    if (countOfOpenBraces > countOfCloseBraces) {
+        return 9;
+    }
+
+    if (countOfOpenBraces < countOfCloseBraces) {
+        return 17;
+    }
+
+    return 0;
+}
+
 function debrace(formula) {
     // ((x|y) | z) = (x|y) | z
     formula = formula.replace(/\((.*)\)/, '\$1');
@@ -75,7 +90,7 @@ function checkFormula(formula) {
         return 11;
     }
 
-    // syntax check
+    // starting syntax check
     let isSyntaxValid = checkSyntax(formula);
     if (isSyntaxValid !== 0) {
         return isSyntaxValid;
@@ -83,15 +98,10 @@ function checkFormula(formula) {
 
     formula = debrace(formula);
 
-    let countOfOpenBraces = formula.split('(').length - 1;
-    let countOfCloseBraces = formula.split(')').length - 1;
-    
-    if (countOfOpenBraces > countOfCloseBraces) {
-        return 9;
-    }
-
-    if (countOfOpenBraces < countOfCloseBraces) {
-        return 17;
+    // braces pairing check
+    let isBracesPaired = checkPairingBraces(formula);
+    if (isBracesPaired !== 0) {
+        return isBracesPaired;
     }
 
     // parsing exactly
