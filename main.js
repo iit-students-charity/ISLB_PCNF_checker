@@ -131,7 +131,6 @@ function checkFormula(formula) {
 
         for (j = i + 1; j < literalGroups.length; j++) {
             if (literalGroups[i].length !== literalGroups[j].length) {
-                console.log(literalGroups[i] + ' ' + literalGroups[j])
                 return 3;
             }
             
@@ -182,7 +181,7 @@ class Question {
     }
 }
 
-var variablesCodes = [ 'A', 'B', 'C' ];
+var variablesCodes = [ 'A', 'B', 'C', 'D' ];
 
 var currentQuestion = generateQuestion();
 var countOfQuestions = 10;
@@ -237,7 +236,7 @@ function next() {
 }
 
 function generateQuestion() {
-    let countOfArgs = getRandomInt(2);
+    let countOfArgs = getRandomInt(3);
     let countOfGroups = getRandomInt(Math.pow(2, countOfArgs));
 
     let formula = generateFormula(countOfGroups, countOfArgs);
@@ -254,15 +253,17 @@ function generateFormula(countOfGroups, countOfArgs) {
     let formula = '';
 
     for (i = 0; i < countOfGroups; i++) {
-        let countOfArgsInParticualarGroup = countOfArgs - getRandomInt(countOfArgs) + 1;
+        let countOfArgsInParticualarGroup = countOfArgs - getRandomInt(countOfArgs) + 2;
         let group = '';
 
-        if (countOfArgsInParticualarGroup !== 1) {
-            group += '(';
+        if (countOfGroups !== 1 && i < countOfGroups - 1) {
+            formula += '(';
         }
 
         for (j = 0; j < countOfArgsInParticualarGroup; j++) {
-            group += '(';
+            if (countOfArgsInParticualarGroup !== 1 && j < countOfArgsInParticualarGroup - 1) {
+                group += '(';
+            }
 
             let isNegative = (Math.random() >= 0.5);
             group += (isNegative ? '(!' : '') + variablesCodes[j] + (isNegative ? ')' : '');
@@ -272,12 +273,10 @@ function generateFormula(countOfGroups, countOfArgs) {
             }
         }
 
-        if (countOfArgsInParticualarGroup !== 1) {
-            group += ')';
-        }
-
-        for (j = 0; j < countOfArgsInParticualarGroup; j++) {
-            group += ')';
+        for (j = 0; j < countOfArgsInParticualarGroup - 1; j++) {
+            if (countOfArgsInParticualarGroup !== 1) {
+                group += ')';
+            }
         }
 
         formula += group;
@@ -285,6 +284,12 @@ function generateFormula(countOfGroups, countOfArgs) {
         if (i < countOfGroups - 1) {
             let random  = Math.random();
             formula += ((random >= 0.3) ? '|' : (random >= 0.2 ? '&' : (random >= 0.1 ? '~' : '->')));
+        }
+    }
+
+    for (j = 0; j < countOfGroups - 1; j++) {
+        if (countOfGroups !== 1) {
+            formula += ')';
         }
     }
 
