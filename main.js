@@ -21,7 +21,8 @@ var checkingMessages = [
     "formula has unmatched operators", // 13
     "invalid syntax: all groups have to be divided by '&', '|', '~' or '->'", // 14
     "expected disjunctions contain '&', '~' or '->'", // 15
-    "formula consists of single symbol or single non-disjunction expression", // 16
+    "formula consists of single braced symbol (tip: debrace it) or single non-disjunction expression", // 16
+    "invalid syntax: extra braces", // 17
 ];
 
 function checkSyntax(formula) {
@@ -29,11 +30,11 @@ function checkSyntax(formula) {
         return 1;
     }
 
-    if (!formula.match(/^\((\(*|[A-Z]|\(!?[A-Z]\))/)) {
+    if (!formula.match(/^\((\(*|[A-Z]|\(!?[A-Z]\))/) && !formula.match(/[A-Z]/g)) {
         return 7;
     }
 
-    if (!formula.match(/[A-Z)]\)$/)) {
+    if (!formula.match(/[A-Z)]\)$/) && !formula.match(/[A-Z]/g)) {
         return 5;
     }
     
@@ -81,15 +82,16 @@ function checkFormula(formula) {
     }
 
     formula = debrace(formula);
-    let formulaCopy = formula;
 
-    while (formulaCopy.match(/[A-Z]/g)) {
-        formulaCopy = formulaCopy.replace(/\(!?[A-Z]([&|~]|->)!?[A-Z]\)/g, '1');
-        console.log(formulaCopy);
-    }
+    let countOfOpenBraces = formula.split('(').length - 1;
+    let countOfCloseBraces = formula.split(')').length - 1;
     
-    if (formulaCopy.indexOf('1') !== -1) {
+    if (countOfOpenBraces > countOfCloseBraces) {
         return 9;
+    }
+
+    if (countOfOpenBraces < countOfCloseBraces) {
+        return 17;
     }
 
     // parsing exactly
@@ -250,6 +252,8 @@ function generateFormula(countOfGroups, countOfArgs) {
         }
 
         for (j = 0; j < countOfArgsInParticualarGroup; j++) {
+            group += '(';
+
             let isNegative = (Math.random() >= 0.5);
             group += (isNegative ? '(!' : '') + variablesCodes[j] + (isNegative ? ')' : '');
             if (j < countOfArgsInParticualarGroup - 1) {
@@ -261,6 +265,11 @@ function generateFormula(countOfGroups, countOfArgs) {
         if (countOfArgsInParticualarGroup !== 1) {
             group += ')';
         }
+
+        for (j = 0; j < countOfArgsInParticualarGroup; j++) {
+            group += ')';
+        }
+
         formula += group;
 
         if (i < countOfGroups - 1) {
