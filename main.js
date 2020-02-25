@@ -23,6 +23,7 @@ var checkingMessages = [
     "expected disjunctions contain '&', '~' or '->'", // 15
     "formula consists of single braced symbol (tip: debrace it) or single non-disjunction expression", // 16
     "invalid syntax: extra braces", // 17
+    "invalid syntax: all binary operations have to be braced", // 18
 ];
 
 function checkSyntax(formula) {
@@ -56,6 +57,10 @@ function checkSyntax(formula) {
 
     if (formula.match(/^\(([A-Z])(([&~]|->)(?!!\1)!?[A-Z])?\)$/)) {
         return 16;
+    }
+    
+    if (formula.match(/([|&~]|->)[A-Z]([|&~]|->)/g)) {
+        return 18;
     }
 
     return 0;
