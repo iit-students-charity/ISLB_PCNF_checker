@@ -90,38 +90,7 @@ function debrace(formula) {
     return formula;
 }
 
-function checkFormula(formula) {
-    if (!formula) {
-        return 11;
-    }
-
-    // starting syntax check
-    let isSyntaxValid = checkSyntax(formula);
-    if (isSyntaxValid !== 0) {
-        return isSyntaxValid;
-    }
-
-    formula = debrace(formula);
-
-    // braces pairing check
-    let isBracesPaired = checkPairingBraces(formula);
-    if (isBracesPaired !== 0) {
-        return isBracesPaired;
-    }
-
-    // parsing exactly
-    let dirtyGroups = formula.split(/\)([&|~]|->)\(/g);    
-
-    let groups = [];
-    dirtyGroups.forEach(group => {
-        groups.push(group.replace(/[()]/g, ''));
-    });
-
-    if (groups.indexOf('|') !== -1 || groups.indexOf('->') !== -1 || groups.indexOf('~') !== -1) {
-        return 2;
-    }
-
-    groups = groups.filter(group => group !== '&');
+function checkLiteralSets(groups) {
     let literalGroups = [];
 
     groups.forEach(value => {
@@ -153,6 +122,47 @@ function checkFormula(formula) {
                 return 8;
             }
         }
+    }
+
+    return 0;
+}
+
+function checkFormula(formula) {
+    if (!formula) {
+        return 11;
+    }
+
+    // starting syntax check
+    let isSyntaxValid = checkSyntax(formula);
+    if (isSyntaxValid !== 0) {
+        return isSyntaxValid;
+    }
+
+    formula = debrace(formula);
+
+    // braces pairing check
+    let isBracesPaired = checkPairingBraces(formula);
+    if (isBracesPaired !== 0) {
+        return isBracesPaired;
+    }
+
+    // parsing exactly
+    let dirtyGroups = formula.split(/\)([&|~]|->)\(/g);
+
+    let groups = [];
+    dirtyGroups.forEach(group => {
+        groups.push(group.replace(/[()]/g, ''));
+    });
+
+    if (groups.indexOf('|') !== -1 || groups.indexOf('->') !== -1 || groups.indexOf('~') !== -1) {
+        return 2;
+    }
+
+    groups = groups.filter(group => group !== '&');
+
+    let isLiteralsUnique = checkLiteralSets(groups);
+    if (isLiteralsUnique !== 0) {
+        return isLiteralsUnique;
     }
 
     return 0;
