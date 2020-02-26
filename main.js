@@ -24,19 +24,25 @@ var checkingMessages = [
     "formula consists of single braced symbol (tip: debrace it) or single non-disjunction expression", // 16
     "invalid syntax: extra braces", // 17
     "invalid syntax: all binary operations have to be braced", // 18
+    "this function is not in principal conjuctive normal form", // 19
+    "invalid syntax: double negation found", // 20
 ];
 
 function checkSyntax(formula) {
-    if (!formula.match(/^([A-Z()|&!~]|->)*$/g)) {
+    if (!formula.match(/^([A-Z()|&!~10]|->)*$/g)) {
         return 1;
     }
 
-    if (!formula.match(/^\((\(*|[A-Z]|\(!?[A-Z]\))/) && !formula.match(/[A-Z]/g)) {
+    if (!formula.match(/^\((\(*|[01A-Z]|\(!?[01A-Z]\))/) && !formula.match(/[A-Z01]/g)) {
         return 7;
     }
 
-    if (!formula.match(/[A-Z)]\)$/) && !formula.match(/[A-Z]/g)) {
+    if (!formula.match(/[A-Z)01]\)$/) && !formula.match(/[A-Z01]/g)) {
         return 5;
+    }
+
+    if (formula.match(/[01]/g)) {
+        return 19;
     }
     
     if (formula.match(/!\(/)) {
@@ -59,7 +65,7 @@ function checkSyntax(formula) {
         return 16;
     }
     
-    if (formula.match(/([|&~]|->)[A-Z]([|&~]|->)/g)) {
+    if (formula.match(/([|&~]|->)[A-Z]([|&~]|->)/g) || formula.match(/^[A-Z]([|&~]|->)[A-Z]$/g)) {
         return 18;
     }
 
